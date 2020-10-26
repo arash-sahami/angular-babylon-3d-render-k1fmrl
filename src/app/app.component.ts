@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
   engine: any;
   world: any;
 
-  sphere: any;
+  sphere: babylon.Mesh;
   skybox: any;
 
   ngOnInit() {
@@ -24,27 +24,34 @@ export class AppComponent implements OnInit {
     this.engine = new BABYLON.Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true });
     var createScene = function () {
       var scene = new BABYLON.Scene(this.engine);
-      var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
-      camera.setTarget(BABYLON.Vector3.Zero());
+      var camera = new BABYLON.ArcRotateCamera('camera', Math.PI / 2, Math.PI / 4, 4, BABYLON.Vector3.Zero(), scene);
+      //camera.setTarget(BABYLON.Vector3.Zero());
       camera.attachControl(this.canvas, false);
+      camera.wheelDeltaPercentage = 0.02;
+      camera.pinchDeltaPercentage = 0.001;
+      camera.lowerAlphaLimit = 5;
       var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(this.lightX, 1, 0), scene);
-      this.skybox = BABYLON.Mesh.CreateBox('skyBox', 100, scene, true);
-      var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-skyboxMaterial.backFaceCulling = false;
-skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://www.tonytextures.com/free-texture-gallery/sky/Sky_Clouds_Photo_Texture_A_P4192452", scene);
-skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-this.skybox.material = skyboxMaterial;
+      var light2 = new BABYLON.DirectionalLight('light2', new BABYLON.Vector3(1, -1, 0), scene);
+      light.intensity = 0.4;
+//       this.skybox = BABYLON.Mesh.CreateBox('skyBox', 100, scene, true);
+//       var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+// skyboxMaterial.backFaceCulling = false;
+// skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://www.tonytextures.com/free-texture-gallery/sky/Sky_Clouds_Photo_Texture_A_P4192452", scene);
+// skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+// skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+// skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+// this.skybox.material = skyboxMaterial;
 
-      this.sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene, false, BABYLON.Mesh.FRONTSIDE);
-
+      this.sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 1, scene, false, BABYLON.Mesh.FRONTSIDE);
+      var f =  BABYLON.Mesh.CreateSphere('sphere1', 16, 1, scene, false, BABYLON.Mesh.FRONTSIDE);
+      // f.updatePoseMatrix()
+      f.position = new BABYLON.Vector3(1,1,1);
+      BABYLON.MeshBuilder.CreateCylinder('cylinder', { height: 1, diameterBottom: 0.5 }, scene);
       var myMaterial = new BABYLON.StandardMaterial("blue", scene);
       myMaterial.diffuseColor = new BABYLON.Color3(.5, 0, 1);
       myMaterial.specularColor = new BABYLON.Color3(this.red, 0.6, 0.87);
       this.sphere.material = myMaterial;
       this.sphere.position.y = this.y;
-
       var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene, false);
       var myMaterial = new BABYLON.StandardMaterial("green", scene);
       myMaterial.diffuseColor = new BABYLON.Color3(0, .8, 0);
